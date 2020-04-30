@@ -93,169 +93,209 @@ function two_d_array(N,M)
 }
 
 
-//parameters for CO2
-var wm=44.0
-var anum=6.02205e23
-var bk  =1.38066e-16
-var etemp=231.0
-var sig  =3.63
+const etemp0=231.0
+const sig0  =3.63
 
-var NCL=4  //lattice size
-var densr = 0.5 //g/cm3
-var tempr = 300 // K
-var temp = tempr/etemp
-var dens = sig*sig*sig*densr*anum/(wm*1e24)
-
-pos = fcc(NCL)
-
-var N = pos.length
-var vol = N/dens
-var bxl = Math.pow(vol, 1./3.)
-var cell = [bxl,bxl,bxl]
-var rc   = bxl/2
-var emu  = anum*bk*etemp*1e-10
-var emup = emu*1e-3/Math.pow(sig*1e-10, 3)/anum
-var pi   = 3.1415926
-var ecc  = pi*dens*(8./9.*Math.pow(rc,-9)-8./3.*Math.pow(rc,-3))
-var vcc  = pi*dens*dens*(32./9.*Math.pow(rc,-9)-16./3.*Math.pow(rc,-3))
-var ul   = bxl/(2*NCL)
-var dtmaxx= ul/2.0 / cell[0]
-var dtmaxy= ul/2.0 / cell[1]
-var dtmaxz= ul/2.0 / cell[2]
-var nstop= 15 //outer loop
+const Navo=6.02205e23
+const KBol  =1.38066e-16
+const Mmol=44.0
+const NCL=4  //lattice size
 const NV = 100
-var nav  = NV*N //inner loop
+const Nstop= 150 //outer loop
+const PI   = 3.1415926
 
-var tempi = 4.0 / temp
+class MCLJ {
 
-console.log("Computer Simulation")
-console.log("Monatomic molecules interacting")
-console.log("with Lennard-Jones potential")
-console.log("Particle number=",N)
-console.log("Steps to be simulated=",nstop)
-console.log("Temperature=",temp)
-console.log("Number density=",dens)
-console.log("Cell length=",bxl)
-console.log("Potential truncation=",rc)
-console.log("Volume of basic cell=",vol)
-console.log("Maximum translation=", ul/2.0)
+    constructor(eps, sigma, density, temperature)
+    {
+        //parameters for CO2
+        this.densr = density //g/cm3
+        this.tempr = temperature // K
+        this.etemp = eps // K
+        this.sig   = sigma // AA
 
+        this.temp = this.tempr/this.etemp
+        console.log(this.tempr, this.etemp)
+        this.dens = this.sig*this.sig*this.sig*this.densr*Navo/(Mmol*1e24)
 
-
-// preset energy and virial
-var e  = two_d_array(N,N)
-var v  = two_d_array(N,N)
-var ep = 0.0
-var vr = 0.0
-
-for(var m=0; m<N; m++){
-    var ev = energy1(m, pos, cell, rc)
-    var epb = ev[0]
-    var vrb = ev[1]
-    for (var j=0; j<N; j++){
-        ep += epb[j]
-        vr += vrb[j]
-        e[j][m] = epb[j]
-        v[j][m] = vrb[j]
-    }
-}
-ep /= 2
-vr /= 2
-var epi = ep/N     // it is not correct. ecc must be added.
-console.log(epi*4) //line number 604
-
-
-//outer loop
-for(var loop=0; loop<2; loop++){
-    var ept = 0.0
-    var vrt = 0.0
+        this.pos  = fcc(NCL)
+        this.nmol = this.pos.length
+        var vol = this.nmol/this.dens
+        var bxl = Math.pow(vol, 1./3.)
+        this.cell = [bxl,bxl,bxl]
+        this.rc   = bxl/2
+        this.emu  = Navo*KBol*this.etemp*1e-10
+        this.emup = this.emu*1e-3/Math.pow(this.sig*1e-10, 3)/Navo
+        this.ecc  = PI*this.dens*(8./9.*Math.pow(this.rc,-9)-8./3.*Math.pow(this.rc,-3))
+        this.vcc  = PI*this.dens*this.dens*(32./9.*Math.pow(this.rc,-9)-16./3.*Math.pow(this.rc,-3))
+        this.ul   = bxl/(2*NCL)
+        this.dtmaxx= this.ul/2.0 / this.cell[0]
+        this.dtmaxy= this.ul/2.0 / this.cell[1]
+        this.dtmaxz= this.ul/2.0 / this.cell[2]
+        this.nav  = NV*this.nmol //inner loop
+        this.tempi = 4.0 / this.temp
     
-    // main loop
-    for(var iss=0; iss<nstop; iss++){
-        var eps = 0.0
-        var vrs = 0.0
-        
-        var nreject = 0
-        
-        // sub loop
-        for(var jss=0; jss<nav; jss++){
-            var m = Math.floor(Math.random() * N)
-            var pos0 = pos[m] //is it a copy? or a reference? It's a reference!
-            var pos0 = pos[m].slice() // It copies.
-            /*test
-              pos[m][0] = 99
-              console.log(pos0)
-            */
-            var dx = (Math.random()*2 - 1)*dtmaxx
-            var dy = (Math.random()*2 - 1)*dtmaxy
-            var dz = (Math.random()*2 - 1)*dtmaxz
-            pos[m][0] += dx
-            pos[m][1] += dy
-            pos[m][2] += dz
-            var epbb = 0.0
-            var vrbb = 0.0
-            for (var i=0; i<N; i++){
-                epbb += e[i][m]
-                vrbb += v[i][m]
-            }
-            var ev = energy1(m, pos, cell, rc)
+        console.log("Computer Simulation")
+        console.log("Monatomic molecules interacting")
+        console.log("with Lennard-Jones potential")
+        console.log("Particle number=",this.nmol)
+        console.log("Steps to be simulated=",Nstop)
+        console.log("Temperature=",this.temp)
+        console.log("Number density=",this.dens)
+        console.log("Cell length=",bxl)
+        console.log("Potential truncation=",this.rc)
+        console.log("Volume of basic cell=",vol)
+        console.log("Maximum translation=", this.ul/2.0)
+    
+        // preset energy and virial
+        this.e  = two_d_array(this.nmol,this.nmol)
+        this.v  = two_d_array(this.nmol,this.nmol)
+        this.ep = 0.0
+        this.vr = 0.0
+    
+        for(var m=0; m<this.nmol; m++){
+            var ev = energy1(m, this.pos, this.cell, this.rc)
             var epb = ev[0]
             var vrb = ev[1]
-            var epaa = 0.0
-            var vraa = 0.0
-            for (var i=0; i<N; i++){
-                epaa += epb[i]
-                vraa += vrb[i]
+            for (var j=0; j<this.nmol; j++){
+                this.ep += epb[j]
+                this.vr += vrb[j]
+                this.e[j][m] = epb[j]
+                this.v[j][m] = vrb[j]
             }
-            var de = (epbb-epaa)*tempi
-            if ( (de >= 0.0) || ( de > Math.log(Math.random()) ) ) {
-                //accept
-                ep += (epaa-epbb)
-                eps += ep
-                vr += (vraa-vrbb)
-                vrs += vr
-                for(var d=0; d<3; d++){
-                    if ( pos[m][d] > 1.0 )
-                        pos[m][d] -= 1.0
-                    else if ( pos[m][d] < 0.0 )
-                        pos[m][d] += 1.0
-                }
-                for(var i=0; i<N; i++){
-                    e[i][m] = epb[i]
-                    e[m][i] = epb[i]
-                    v[i][m] = vrb[i]
-                    v[m][i] = vrb[i]
-                } //120
-            } else {
-                //reject
-                nreject ++
-                pos[m] = pos0
-                eps += ep
-                vrs += vr
-            }
-        } //80
-        ept += eps
-        vrt += vrs
+        }
+        this.ep /= 2
+        this.vr /= 2
+
+        this.eps = 0.0
+        this.vrs = 0.0
+        this.ept = 0.0
+        this.vrt = 0.0
+
+        this.loop = 0
+        this.iss  = 0
+    }
+    
+    
+    loop_manager()
+    {
+        if (this.iss == 0){
+            output.innerHTML += "loop | potential energy | pressure | dr \n\n"
+        }
+        this.oneMCStep()
+
+        this.iss ++
+        
+        if (this.iss == Nstop){
+            // show grand average
+            var avg_e = this.ept*4 / (this.nav*this.nmol*Nstop)  + this.ecc 
+            var avg_v = this.dens*(this.temp + this.vrt*24 / (this.nav*this.nmol*Nstop*3) ) + this.vcc
+        
+            console.log("                     Loop", Nstop*NV)
+            console.log("         Density [g /cm3]", this.densr)
+            console.log("          Temperature [K]", this.tempr)
+            console.log("Potential Energy [kJ/mol]", avg_e*this.emu)
+            console.log("           Pressure [MPa]", avg_v*this.emup)
+            output.innerHTML += "                     Loop " + (Nstop*NV) + "\n"
+            output.innerHTML += "         Density [g /cm3] " + (this.densr).toFixed(2) + "\n"
+            output.innerHTML += "          Temperature [K] " + (this.tempr).toFixed(1) + "\n"
+            output.innerHTML += "Potential Energy [kJ/mol] " + (avg_e*this.emu).toFixed(4) + "\n"
+            output.innerHTML += "           Pressure [MPa] " + (avg_v*this.emup).toFixed(4) + "\n\n"
+            this.iss = 0
+            this.ept = 0.0
+            this.vrt = 0.0
+            this.loop ++
+        }
+    }
+
+
+    oneMCStep()
+    {
+        this.eps = 0.0
+        this.vrs = 0.0
+            
+        this.nreject = 0
+            
+        for(var jss=0; jss<this.nav; jss++){
+            this.oneTrial()
+        }
+        this.ept += this.eps
+        this.vrt += this.vrs
         
         // adjust the magnitude of displacements
-        var rejectratio = nreject / nav
+        var rejectratio = this.nreject / this.nav
         var dispratio   = (1.0 + (0.5 - rejectratio)*0.2)
-        dtmaxx *= dispratio
-        dtmaxy *= dispratio
-        dtmaxz *= dispratio
-        
+        this.dtmaxx *= dispratio
+        this.dtmaxy *= dispratio
+        this.dtmaxz *= dispratio
+            
         //average of the inner loop
-        var avg_e = eps*4 / (nav*N)  + ecc 
-        var avg_v = dens*(temp + vrs*24 / (nav*N*3) ) + vcc
-        
-        console.log(iss, avg_e*emu, avg_v*emup, dispratio)
+        var avg_e = this.eps*4 / (this.nav*this.nmol)  + this.ecc 
+        var avg_v = this.dens*(this.temp + this.vrs*24 / (this.nav*this.nmol*3) ) + this.vcc
+            
+        console.log(this.iss, avg_e*this.emu, avg_v*this.emup, dispratio)
+        output.innerHTML += new String(this.iss) + "\t" + (avg_e*this.emu).toFixed(4) + "\t" + (avg_v*this.emup).toFixed(4) + "\t" + dispratio.toFixed(3) + "\n"
     }
-    var avg_e = ept*4 / (nav*N*nstop)  + ecc 
-    var avg_v = dens*(temp + vrt*24 / (nav*N*nstop*3) ) + vcc
-    
-    console.log("                     Loop", nstop*NV)
-    console.log("         Density [g /cm3]", densr)
-    console.log("          Temperature [K]", tempr)
-    console.log("Potential Energy [kJ/mol]", avg_e*emu)
-    console.log("           Pressure [MPa]", avg_v*emup)
+
+
+    oneTrial()
+    {
+        var m = Math.floor(Math.random() * this.nmol)
+        //var pos0 = pos[m] //is it a copy? or a reference? It's a reference!
+        var pos0 = this.pos[m].slice() // It copies.
+        var dx = (Math.random()*2 - 1)*this.dtmaxx
+        var dy = (Math.random()*2 - 1)*this.dtmaxy
+        var dz = (Math.random()*2 - 1)*this.dtmaxz
+        this.pos[m][0] += dx
+        this.pos[m][1] += dy
+        this.pos[m][2] += dz
+        var epbb = 0.0
+        var vrbb = 0.0
+        for (var i=0; i<this.nmol; i++){
+            epbb += this.e[i][m]
+            vrbb += this.v[i][m]
+        }
+        var ev = energy1(m, this.pos, this.cell, this.rc)
+        var epb = ev[0]
+        var vrb = ev[1]
+        var epaa = 0.0
+        var vraa = 0.0
+        for (var i=0; i<this.nmol; i++){
+            epaa += epb[i]
+            vraa += vrb[i]
+        }
+        var de = (epbb-epaa)*this.tempi
+        if ( (de >= 0.0) || ( de > Math.log(Math.random()) ) ) {
+            //accept
+            this.ep += (epaa-epbb)
+            this.vr += (vraa-vrbb)
+            for(var d=0; d<3; d++){
+                if ( this.pos[m][d] > 1.0 )
+                    this.pos[m][d] -= 1.0
+                else if ( this.pos[m][d] < 0.0 )
+                    this.pos[m][d] += 1.0
+            }
+            for(var i=0; i<this.nmol; i++){
+                this.e[i][m] = epb[i]
+                this.e[m][i] = epb[i]
+                this.v[i][m] = vrb[i]
+                this.v[m][i] = vrb[i]
+            } //120
+        } else {
+            //reject
+            this.nreject ++
+            // recover positions
+            this.pos[m] = pos0
+        }
+        this.eps += this.ep
+        this.vrs += this.vr
+    }
+
 }
+
+function test()
+{
+    var mclj = new MCLJ(226, 3.62, 0.5, 300)
+    mclj.simulate()
+}
+
