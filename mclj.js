@@ -180,11 +180,19 @@ class MCLJ {
     loop_manager()
     {
         if (this.iss == 0){
-            output.innerHTML += "loop | potential energy | pressure | dr \n\n"
+            output.innerHTML += "loop | avg pot energy | avg pres.\n\n"
         }
         this.oneMCStep()
 
+        this.ept += this.eps
+        this.vrt += this.vrs
         this.iss ++
+        //average of the inner loop
+        var avg_e = this.ept*4 / (this.nav*this.nmol*this.iss)  + this.ecc 
+        var avg_v = this.dens*(this.temp + this.vrt*24 / (this.nav*this.nmol*3*this.iss) ) + this.vcc
+            
+        console.log(this.iss, avg_e*this.emu, avg_v*this.emup)
+        output.innerHTML += new String(this.iss) + "\t" + (avg_e*this.emu).toFixed(4) + "\t" + (avg_v*this.emup).toFixed(4) + "\n"
         
         if (this.iss == Nstop){
             // show grand average
@@ -196,9 +204,11 @@ class MCLJ {
             console.log("          Temperature [K]", this.tempr)
             console.log("Potential Energy [kJ/mol]", avg_e*this.emu)
             console.log("           Pressure [MPa]", avg_v*this.emup)
-            output.innerHTML += "                     Loop " + (Nstop*NV) + "\n"
-            output.innerHTML += "         Density [g /cm3] " + (this.densr).toFixed(2) + "\n"
-            output.innerHTML += "          Temperature [K] " + (this.tempr).toFixed(1) + "\n"
+            output.innerHTML += "\n                     Loop " + (Nstop*NV) + "\n"
+            output.innerHTML += "                Sigma [A] " + this.sig.toFixed(2) + "\n"
+            output.innerHTML += "           Epsilon/kB [K] " + this.etemp.toFixed(0) + "\n"
+            output.innerHTML += "         Density [g /cm3] " + this.densr.toFixed(2) + "\n"
+            output.innerHTML += "          Temperature [K] " + this.tempr.toFixed(1) + "\n"
             output.innerHTML += "Potential Energy [kJ/mol] " + (avg_e*this.emu).toFixed(4) + "\n"
             output.innerHTML += "           Pressure [MPa] " + (avg_v*this.emup).toFixed(4) + "\n\n"
             this.iss = 0
@@ -219,8 +229,6 @@ class MCLJ {
         for(var jss=0; jss<this.nav; jss++){
             this.oneTrial()
         }
-        this.ept += this.eps
-        this.vrt += this.vrs
         
         // adjust the magnitude of displacements
         var rejectratio = this.nreject / this.nav
@@ -229,12 +237,6 @@ class MCLJ {
         this.dtmaxy *= dispratio
         this.dtmaxz *= dispratio
             
-        //average of the inner loop
-        var avg_e = this.eps*4 / (this.nav*this.nmol)  + this.ecc 
-        var avg_v = this.dens*(this.temp + this.vrs*24 / (this.nav*this.nmol*3) ) + this.vcc
-            
-        console.log(this.iss, avg_e*this.emu, avg_v*this.emup, dispratio)
-        output.innerHTML += new String(this.iss) + "\t" + (avg_e*this.emu).toFixed(4) + "\t" + (avg_v*this.emup).toFixed(4) + "\t" + dispratio.toFixed(3) + "\n"
     }
 
 
