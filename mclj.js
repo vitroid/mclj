@@ -207,10 +207,10 @@ class MCLJ {
             output.innerHTML += "\n                     Loop " + (Nstop*NV) + "\n"
             output.innerHTML += "                Sigma [A] " + this.sig.toFixed(2) + "\n"
             output.innerHTML += "           Epsilon/kB [K] " + this.etemp.toFixed(0) + "\n"
-            output.innerHTML += "         Density [g /cm3] " + this.densr.toFixed(2) + "\n"
+            output.innerHTML += "         Density [g /cm3] " + this.densr.toPrecision(6) + "\n"
             output.innerHTML += "          Temperature [K] " + this.tempr.toFixed(1) + "\n"
-            output.innerHTML += "Potential Energy [kJ/mol] " + (avg_e*this.emu).toFixed(4) + "\n"
-            output.innerHTML += "           Pressure [MPa] " + (avg_v*this.emup).toFixed(4) + "\n\n"
+            output.innerHTML += "Potential Energy [kJ/mol] " + (avg_e*this.emu).toPrecision(6) + "\n"
+            output.innerHTML += "           Pressure [MPa] " + (avg_v*this.emup).toPrecision(6) + "\n\n"
             this.iss = 0
             this.ept = 0.0
             this.vrt = 0.0
