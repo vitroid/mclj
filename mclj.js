@@ -192,7 +192,7 @@ class MCLJ {
         var avg_v = this.dens*(this.temp + this.vrt*24 / (this.nav*this.nmol*3*this.iss) ) + this.vcc
             
         console.log(this.iss, avg_e*this.emu, avg_v*this.emup)
-        output.innerHTML += new String(this.iss) + "\t" + (avg_e*this.emu).toFixed(4) + "\t" + (avg_v*this.emup).toFixed(4) + "\n"
+        output.innerHTML += new String(this.iss) + "\t" + (avg_e*this.emu).toPrecision(6) + "\t" + (avg_v*this.emup).toPrecision(6) + "\n"
         
         if (this.iss == Nstop){
             // show grand average
