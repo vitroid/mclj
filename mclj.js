@@ -180,7 +180,7 @@ class MCLJ {
     loop_manager()
     {
         if (this.iss == 0){
-            output.innerHTML += "loop | avg pot energy | avg pres.\n\n"
+            output.innerHTML += "loop || avg pot energy || avg pres.\n\n"
         }
         this.oneMCStep()
 
