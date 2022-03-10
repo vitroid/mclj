@@ -180,7 +180,7 @@ class MCLJ {
     loop_manager()
     {
         if (this.iss == 0){
-            output.innerHTML += "loop | avg pot energy | avg pres.\n\n"
+            output.innerHTML += "loop || avg pot energy || avg pres.\n\n"
         }
         this.oneMCStep()
 
@@ -192,7 +192,7 @@ class MCLJ {
         var avg_v = this.dens*(this.temp + this.vrt*24 / (this.nav*this.nmol*3*this.iss) ) + this.vcc
             
         console.log(this.iss, avg_e*this.emu, avg_v*this.emup)
-        output.innerHTML += new String(this.iss) + "\t" + (avg_e*this.emu).toFixed(4) + "\t" + (avg_v*this.emup).toFixed(4) + "\n"
+        output.innerHTML += new String(this.iss) + "\t" + (avg_e*this.emu).toPrecision(6) + "\t" + (avg_v*this.emup).toPrecision(6) + "\n"
         
         if (this.iss == Nstop){
             // show grand average
@@ -207,10 +207,10 @@ class MCLJ {
             output.innerHTML += "\n                     Loop " + (Nstop*NV) + "\n"
             output.innerHTML += "                Sigma [A] " + this.sig.toFixed(2) + "\n"
             output.innerHTML += "           Epsilon/kB [K] " + this.etemp.toFixed(0) + "\n"
-            output.innerHTML += "         Density [g /cm3] " + this.densr.toFixed(2) + "\n"
+            output.innerHTML += "         Density [g /cm3] " + this.densr.toPrecision(6) + "\n"
             output.innerHTML += "          Temperature [K] " + this.tempr.toFixed(1) + "\n"
-            output.innerHTML += "Potential Energy [kJ/mol] " + (avg_e*this.emu).toFixed(4) + "\n"
-            output.innerHTML += "           Pressure [MPa] " + (avg_v*this.emup).toFixed(4) + "\n\n"
+            output.innerHTML += "Potential Energy [kJ/mol] " + (avg_e*this.emu).toPrecision(6) + "\n"
+            output.innerHTML += "           Pressure [MPa] " + (avg_v*this.emup).toPrecision(6) + "\n\n"
             this.iss = 0
             this.ept = 0.0
             this.vrt = 0.0
