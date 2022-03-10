@@ -2,4 +2,4 @@
 
 Monte Carlo simulation of Lennard-Jones particles in JavaScript.
 
-See [here](docs/) for the demonstration.
+See [here](https://vitroid.github.io/mclj) for the demonstration.
