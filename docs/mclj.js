@@ -134,7 +134,7 @@ class MCLJ {
         this.dtmaxz= this.ul/2.0 / this.cell[2]
         this.nav  = NV*this.nmol //inner loop
         this.tempi = 4.0 / this.temp
-    
+
         console.log("Computer Simulation")
         console.log("Monatomic molecules interacting")
         console.log("with Lennard-Jones potential")
@@ -146,13 +146,13 @@ class MCLJ {
         console.log("Potential truncation=",this.rc)
         console.log("Volume of basic cell=",vol)
         console.log("Maximum translation=", this.ul/2.0)
-    
+
         // preset energy and virial
         this.e  = two_d_array(this.nmol,this.nmol)
         this.v  = two_d_array(this.nmol,this.nmol)
         this.ep = 0.0
         this.vr = 0.0
-    
+
         for(var m=0; m<this.nmol; m++){
             var ev = energy1(m, this.pos, this.cell, this.rc)
             var epb = ev[0]
@@ -175,8 +175,8 @@ class MCLJ {
         this.loop = 0
         this.iss  = 0
     }
-    
-    
+
+
     loop_manager()
     {
         if (this.iss == 0){
@@ -188,17 +188,17 @@ class MCLJ {
         this.vrt += this.vrs
         this.iss ++
         //average of the inner loop
-        var avg_e = this.ept*4 / (this.nav*this.nmol*this.iss)  + this.ecc 
+        var avg_e = this.ept*4 / (this.nav*this.nmol*this.iss)  + this.ecc
         var avg_v = this.dens*(this.temp + this.vrt*24 / (this.nav*this.nmol*3*this.iss) ) + this.vcc
-            
+
         console.log(this.iss, avg_e*this.emu, avg_v*this.emup)
         output.innerHTML += new String(this.iss) + "\t" + (avg_e*this.emu).toPrecision(6) + "\t" + (avg_v*this.emup).toPrecision(6) + "\n"
-        
+
         if (this.iss == Nstop){
             // show grand average
-            var avg_e = this.ept*4 / (this.nav*this.nmol*Nstop)  + this.ecc 
+            var avg_e = this.ept*4 / (this.nav*this.nmol*Nstop)  + this.ecc
             var avg_v = this.dens*(this.temp + this.vrt*24 / (this.nav*this.nmol*Nstop*3) ) + this.vcc
-        
+
             console.log("                     Loop", Nstop*NV)
             console.log("         Density [g /cm3]", this.densr)
             console.log("          Temperature [K]", this.tempr)
@@ -223,20 +223,20 @@ class MCLJ {
     {
         this.eps = 0.0
         this.vrs = 0.0
-            
+
         this.nreject = 0
-            
+
         for(var jss=0; jss<this.nav; jss++){
             this.oneTrial()
         }
-        
+
         // adjust the magnitude of displacements
         var rejectratio = this.nreject / this.nav
         var dispratio   = (1.0 + (0.5 - rejectratio)*0.2)
         this.dtmaxx *= dispratio
         this.dtmaxy *= dispratio
         this.dtmaxz *= dispratio
-            
+        redraw()
     }
 
 
@@ -292,12 +292,11 @@ class MCLJ {
         this.eps += this.ep
         this.vrs += this.vr
     }
-
 }
+
+var mclj = new MCLJ(226, 3.62, 0.5, 300)
 
 function test()
 {
-    var mclj = new MCLJ(226, 3.62, 0.5, 300)
     mclj.simulate()
 }
-
