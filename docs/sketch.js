@@ -1,6 +1,7 @@
 
 function setup() {
-    createCanvas(400, 400, WEBGL)
+    var canvas = createCanvas(600, 600, WEBGL)
+    canvas.parent('sketch-holder');
     background(200)
     noLoop()
     normalMaterial()
@@ -35,7 +36,7 @@ function draw() {
         p[1] -= floor(p[1]+0.5)
         p[2] -= floor(p[2]+0.5)
         translate(p[0], p[1], p[2])
-        sphere(sig0/cell[0]/10,4,4) //mclj.sig / cell[0])
+        sphere(0.5/cell[0])
         pop()
     }
 }

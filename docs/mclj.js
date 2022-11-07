@@ -99,7 +99,7 @@ const sig0  =3.63
 const Navo=6.02205e23
 const KBol  =1.38066e-16
 const Mmol=44.0
-const NCL=4  //lattice size
+const NCL=3  //lattice size
 const NV = 100
 const Nstop= 150 //outer loop
 const PI   = 3.1415926
@@ -294,9 +294,4 @@ class MCLJ {
     }
 }
 
-var mclj = new MCLJ(226, 3.62, 0.5, 300)
-
-function test()
-{
-    mclj.simulate()
-}
+var mclj = new MCLJ(231, 3.63, 1.5, 300)

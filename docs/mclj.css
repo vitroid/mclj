@@ -26,6 +26,17 @@ textarea {
     color: #0f0;
 }
 
+.main {
+    margin: 0;
+    display: flex;
+
+    /* This centers our sketch horizontally. */
+    justify-content: left;
+
+    /* This centers our sketch vertically. */
+    /* align-items: center; */
+}
+
 //input[type=range] {width:210px;}
 
 input[type=text] {
