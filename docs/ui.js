@@ -1,23 +1,24 @@
 var status = 0 // 0 before init, 1 running, 2 pausing
-var mclj
-var sig = NaN
-var etemp = NaN
-var density = NaN     //dummy value
-var temperature = NaN //dummy value
+
+document.getElementById('idsig').value = sig*100;
+document.getElementById('ideps').value = etemp;
+document.getElementById('idtemperature').value = temperature;
+document.getElementById('iddensity').value = density;
+startButton.disabled = false
 
 var startTime = 0
 
-function changeID() {
-    var id = Number(ID.value)
-    var iee = Math.floor(id / 4) - 1
-    var iss = (id + 3) % 4 - 1
-    //global values
-    sig = sig0 + 0.01 * iss
-    etemp = etemp0 + iee * 2
-    sigma.innerHTML = sig.toFixed(2)
-    epsilon.innerHTML = etemp.toFixed(1)
-    startButton.disabled = isNaN(etemp) || isNaN(sig) || isNaN(temperature) || isNaN(density)
-}
+// function changeID() {
+//     var id = Number(ID.value)
+//     var iee = Math.floor(id / 4) - 1
+//     var iss = (id + 3) % 4 - 1
+//     //global values
+//     sig = sig0 + 0.01 * iss
+//     etemp = etemp0 + iee * 2
+//     sigma.innerHTML = sig.toFixed(2)
+//     epsilon.innerHTML = etemp.toFixed(1)
+//     startButton.disabled = isNaN(etemp) || isNaN(sig) || isNaN(temperature) || isNaN(density)
+// }
 
 function simulate() {
     mclj.loop_manager()
@@ -47,6 +48,16 @@ function startStop() {
         startTime = (new Date()).getTime()
         simulate()
     }
+}
+
+function changeS() {
+    sig = Number(idsig.value) / 100 // MCでは長さの単位はAを使用
+    startButton.disabled = isNaN(etemp) || isNaN(sig) || isNaN(temperature) || isNaN(density)
+}
+
+function changeE() {
+    etemp = Number(ideps.value)
+    startButton.disabled = isNaN(etemp) || isNaN(sig) || isNaN(temperature) || isNaN(density)
 }
 
 function changeT() {

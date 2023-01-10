@@ -1,29 +1,11 @@
-body {
-    background-color:#222;
-    color: #fff;
+/* style.css */
+
+html, body {
+    height: 100%;
+    max-width: 1200px;
+    background-color:#eee;
+    color: #000;
     font-family:Arial, sans-serif;
-}
-
-p {
-    margin-left:auto;
-    margin-right:auto;
-}    /* keep paragraphs narrow and centered */
-
-h1 {
-    font-size: large;
-}    /* keep paragraphs narrow and centered */
-
-input[type=button] {
-    font-family:Arial, sans-serif;
-    font-size: x-large;
-}                    /* makes buttons bigger */
-
-textarea {
-    width:100%;
-    height:400px;
-    font-family:monospace;
-    background-color:#333;
-    color: #0f0;
 }
 
 .main {
@@ -37,10 +19,19 @@ textarea {
     /* align-items: center; */
 }
 
-//input[type=range] {width:210px;}
+.text {
+    padding: 0 15px 0 15px;
+}
+
+textarea {
+    width:100%;
+    height:400px;
+    font-family:monospace;
+    background-color:#fff;
+    color: #080;
+}
 
 input[type=text] {
-    background-color:#333;
-    color: #fff;
-    //border:0px
+    background-color:#fff;
+    color: #000;
 }

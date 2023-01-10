@@ -1,3 +1,10 @@
+// Variables for UI
+let sig = 3.63 // AA
+let etemp = 231 // Kelvin
+let temperature = 200 // K, 温度制御しない時は0に設定
+let density = 0.15 // g/cm3
+
+
 function fcc(N)
 /*
  FCC 4 N N N lattice ( fractional coordinate )
@@ -19,13 +26,6 @@ function fcc(N)
         }
     }
     return pos
-}
-
-
-
-function abs(x)
-{
-    return x<0?-x:x
 }
 
 
@@ -56,13 +56,13 @@ function energy1(m, pos, cell, rc)
         if (j != m){
             var rdx = wrap(pos[m][0] - pos[j][0])
             var dx = rdx*cell[0]
-            if (abs(dx) < rc){
+            if (Math.abs(dx) < rc){
                 var rdy = wrap(pos[m][1] - pos[j][1])
                 var dy = rdy*cell[1]
-                if (abs(dy) < rc){
+                if (Math.abs(dy) < rc){
                     var rdz = wrap(pos[m][2] - pos[j][2])
                     var dz = rdz*cell[2]
-                    if (abs(dz) < rc){
+                    if (Math.abs(dz) < rc){
                         var rs = dx*dx+dy*dy+dz*dz
                         if (rs<rc2){
                             var rsi = 1/rs
@@ -99,10 +99,9 @@ const sig0  =3.63
 const Navo=6.02205e23
 const KBol  =1.38066e-16
 const Mmol=44.0
-const NCL=3  //lattice size
+const NCL=4  //lattice size
 const NV = 100
 const Nstop= 150 //outer loop
-const PI   = 3.1415926
 
 class MCLJ {
 
@@ -126,8 +125,8 @@ class MCLJ {
         this.rc   = bxl/2
         this.emu  = Navo*KBol*this.etemp*1e-10
         this.emup = this.emu*1e-3/Math.pow(this.sig*1e-10, 3)/Navo
-        this.ecc  = PI*this.dens*(8./9.*Math.pow(this.rc,-9)-8./3.*Math.pow(this.rc,-3))
-        this.vcc  = PI*this.dens*this.dens*(32./9.*Math.pow(this.rc,-9)-16./3.*Math.pow(this.rc,-3))
+        this.ecc  = Math.PI*this.dens*(8./9.*Math.pow(this.rc,-9)-8./3.*Math.pow(this.rc,-3))
+        this.vcc  = Math.PI*this.dens*this.dens*(32./9.*Math.pow(this.rc,-9)-16./3.*Math.pow(this.rc,-3))
         this.ul   = bxl/(2*NCL)
         this.dtmaxx= this.ul/2.0 / this.cell[0]
         this.dtmaxy= this.ul/2.0 / this.cell[1]
@@ -293,5 +292,3 @@ class MCLJ {
         this.vrs += this.vr
     }
 }
-
-var mclj = new MCLJ(231, 3.63, 1.5, 300)

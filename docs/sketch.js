@@ -1,6 +1,7 @@
+var mclj = new MCLJ(231, 3.63, 0.15, 300)
 
 function setup() {
-    var canvas = createCanvas(600, 600, WEBGL)
+    var canvas = createCanvas(400, 400, WEBGL)
     canvas.parent('sketch-holder');
     background(200)
     noLoop()
@@ -39,9 +40,4 @@ function draw() {
         sphere(0.5/cell[0])
         pop()
     }
-}
-
-function mousePressed(ev){
-    console.log(ev)
-    console.log(mouseX, mouseY)
 }
